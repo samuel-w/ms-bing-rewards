@@ -21,6 +21,21 @@ export async function getSearchLinks(browser: puppeteer.Browser) {
     )
   );
   
+  // Check if log in carried over
+  await page.evaluate(() => {
+	const signInAnchor: HTMLAnchorElement = document.querySelector('#id_l');
+    const loggedInUsername = signInAnchor.textContent;
+    const signedOut = loggedInUsername.toLocaleLowerCase() === 'sign in';
+
+    if (!signedOut) return signedOut;
+
+    // Click sign in if necessary
+    signInAnchor.click();
+
+    // HACK: Wait arbitrary time for cookies to be loaded.
+    return new Promise(resolve => setTimeout(resolve, 1000));
+  });
+  
   await page.close();
   
   return links;
@@ -54,39 +69,14 @@ export async function login(browser: puppeteer.Browser) {
 
 export async function runSearch(browser: puppeteer.Browser, text: string) {
   const searchPage = await browser.newPage();
- 
-  // Disable Javascript to prevent detection of user agent switching
-  await searchPage.setRequestInterception(true);
- 
-  searchPage.on('request', request => {
-    if (request.resourceType() === 'script')
-      request.abort();
-    else
-      request.continue();
-  });
 
   await searchPage.goto('https://bing.com/');
-
-  // Check if log in carried over
-  await searchPage.evaluate(async () => {
-    const signInAnchor: HTMLAnchorElement = document.querySelector('#id_l');
-    const loggedInUsername = signInAnchor.textContent;
-    const signedOut = loggedInUsername.toLocaleLowerCase() === 'sign in';
-
-    if (!signedOut) return signedOut;
-
-    // Click sign in if necessary
-    signInAnchor.click();
-
-    // HACK: Wait arbitrary time for cookies to be loaded.
-    return new Promise(resolve => setTimeout(resolve, 1000));
-  });
-
+ 
   await searchPage.type('[name="q"]', text, { delay: randomInt(26,50) });
   const formHandle = await searchPage.$('#sb_form');
   await formHandle.press('Enter');
   await searchPage.waitForNavigation();
   await searchPage.waitFor(randomInt(2000, 5000));
-
+  
   await searchPage.close();
 }
