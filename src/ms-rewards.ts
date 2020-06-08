@@ -6,16 +6,23 @@ export async function getSearchLinks(browser: puppeteer.Browser) {
   const page = await browser.newPage();
 
   await page.goto('https://www.bing.com/');
+
   await page.waitFor('#crs_pane a');
+
+  await page.click('#rightNavCaro');
+  await page.click('#rightNavCaro');
+  
+  // To allow bar to load fully
+  await page.waitFor(randomInt(1000, 1500));
 
   const links = page.evaluate(() =>
     Array.from(document.querySelectorAll('#crs_pane a')).map(
       (a: HTMLAnchorElement) => a.textContent
     )
   );
-
+  
   await page.close();
-
+  
   return links;
 }
 
@@ -47,6 +54,16 @@ export async function login(browser: puppeteer.Browser) {
 
 export async function runSearch(browser: puppeteer.Browser, text: string) {
   const searchPage = await browser.newPage();
+ 
+  // Disable Javascript to prevent detection of user agent switching
+  await searchPage.setRequestInterception(true);
+ 
+  searchPage.on('request', request => {
+    if (request.resourceType() === 'script')
+      request.abort();
+    else
+      request.continue();
+  });
 
   await searchPage.goto('https://bing.com/');
 
@@ -65,7 +82,7 @@ export async function runSearch(browser: puppeteer.Browser, text: string) {
     return new Promise(resolve => setTimeout(resolve, 1000));
   });
 
-  await searchPage.type('[name="q"]', text, { delay: 26 });
+  await searchPage.type('[name="q"]', text, { delay: randomInt(26,50) });
   const formHandle = await searchPage.$('#sb_form');
   await formHandle.press('Enter');
   await searchPage.waitForNavigation();
