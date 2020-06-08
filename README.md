@@ -19,7 +19,7 @@ items.
 - With [npm](https://npmjs.org/) installed, run:
   - `npm install`
   - `npm run build`
-  - To run the searches, run `npm run start`
+  - To run the searches, run `npm run start`, for mobile, run `npm run start:mobile`
 
 **NOTE:** the login screen has been changed several times—sometimes very
 subtly—in the last couple months. Since the script relies on selectors to find
