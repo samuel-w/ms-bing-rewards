@@ -56,7 +56,9 @@ export async function rememberLogin(browser: puppeteer.Browser, platform: any) {
     });
   } else if (platform == Platforms.MOBILE) {
     await page.click('#mHamburger');
-    await page.waitFor(1000);
+
+    // To allow sidebar to open
+    await page.waitFor(500);
 
 
     await page.evaluate(() => {
