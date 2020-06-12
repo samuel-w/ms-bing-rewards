@@ -20,7 +20,7 @@ async function main() {
 
   console.log(userAgent);
 
-  const [loginCookies, searchLinks] = await Promise.all([
+  const [_, searchLinks] = await Promise.all([
     // Set the cookies necessary from logging in
     login(browser),
     // Get list of text to search for
@@ -29,7 +29,7 @@ async function main() {
 
   // Create a list of searches to run, but don't run them yet
   const runnableSearches = searchLinks.map(textContent => () =>
-    runSearch(browser, textContent, loginCookies)
+    runSearch(browser, textContent)
   );
 
   await rememberLogin(browser, userAgent);
