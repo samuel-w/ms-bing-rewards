@@ -1,5 +1,6 @@
 import puppeteer from 'puppeteer';
 import { Platforms, rememberLogin, getSearchLinks, login, runSearch } from './ms-rewards';
+import { platform } from 'os';
 
 const isDev = process.env.NDOE_ENV !== 'production';
 
@@ -24,20 +25,14 @@ async function main() {
     // Set the cookies necessary from logging in
     login(browser),
     // Get list of text to search for
-    getSearchLinks(browser)
+    getSearchLinks(browser, userAgent)
   ]);
 
-  // Create a list of searches to run, but don't run them yet
-  const runnableSearches = searchLinks.map(textContent => () =>
-    runSearch(browser, textContent)
-  );
 
   await rememberLogin(browser, userAgent);
 
   // Open searches in browser serially
-  for (const search of runnableSearches) {
-    await search();
-  }
+  await runSearch(browser, searchLinks);
 
   await browser.close();
 }

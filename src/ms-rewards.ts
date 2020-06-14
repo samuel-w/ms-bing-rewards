@@ -7,8 +7,8 @@ export const Platforms = {
   MOBILE: 'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.96 Mobile Safari/537.36'
 }
 
-
-export async function getSearchLinks(browser: puppeteer.Browser) {
+export async function getSearchLinks(browser: puppeteer.Browser, platform: any) {
+	/*
   const page = await browser.newPage();
 
   await page.goto('https://www.bing.com/');
@@ -30,17 +30,34 @@ export async function getSearchLinks(browser: puppeteer.Browser) {
   await page.close();
 
   return links;
+  */
+  const fs = require("fs");
+  const allWords: Array<string> = fs.readFileSync("words_mit.txt", 'utf-8').split('\n');
+
+  const searchesRequired = (platform == Platforms.DESKTOP ? 30 : 20) + randomInt(2, 7);
+
+
+  var words = new Array(0);
+  for (var i = 0; i < searchesRequired; i++) {
+    words.push(allWords[randomInt(0, allWords.length)]);
+  }
+  await console.log(words);
+  console.log(words.length);
+
+  return words;
+
 }
 
 export async function rememberLogin(browser: puppeteer.Browser, platform: any) {
   const page = await browser.newPage();
-
+  await console.log(platform == Platforms.DESKTOP);
+  await console.log(platform == Platforms.MOBILE);
   await page.goto('https://www.bing.com/');
 
-  // To allow bar to load fully
-  await page.waitFor(1500);
+
 
   if (platform == Platforms.DESKTOP) {
+    page.waitForSelector('#id_l');
     await page.evaluate(() => {
       const signInAnchor: HTMLAnchorElement = document.querySelector('#id_l');
       const loggedInUsername = signInAnchor.textContent;
@@ -55,10 +72,12 @@ export async function rememberLogin(browser: puppeteer.Browser, platform: any) {
       return new Promise(resolve => setTimeout(resolve, 1000));
     });
   } else if (platform == Platforms.MOBILE) {
+    await page.waitFor(5000);
+    //page.waitForSelector('#mHamburger');
     await page.click('#mHamburger');
 
     // To allow sidebar to open
-    await page.waitFor(500);
+    await page.waitForSelector('#hb_s');
 
 
     await page.evaluate(() => {
@@ -109,18 +128,14 @@ export async function login(browser: puppeteer.Browser) {
 
 }
 
-export async function runSearch(browser: puppeteer.Browser, text: string) {
+export async function runSearch(browser: puppeteer.Browser, queries: Array<string>) {
   const searchPage = await browser.newPage();
 
-  await searchPage.goto('https://bing.com/');
-
-  await searchPage.type('[name="q"]', text, { delay: randomInt(26, 50) });
-
-  const formHandle = await searchPage.$('#sb_form');
-  await formHandle.press('Enter');
-  await searchPage.waitForNavigation();
-  await searchPage.waitFor(randomInt(2000, 5000));
-
+  for (const word of queries) {
+    await searchPage.goto('https://bing.com/?q=' + word);
+    await searchPage.waitForNavigation();
+    await searchPage.waitFor(randomInt(2000, 5000));
+  }
   await searchPage.close();
 
 }
