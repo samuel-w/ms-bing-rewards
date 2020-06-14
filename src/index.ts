@@ -11,10 +11,6 @@ async function main() {
     headless: false,
     devtools: isDev,
     args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-gpu',
       '--user-agent=' + userAgent
     ]
   });
