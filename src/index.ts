@@ -1,6 +1,5 @@
 import puppeteer from 'puppeteer';
 import { Platforms, getSearchLinks, login, runSearch } from './ms-rewards';
-import { platform } from 'os';
 
 const isDev = process.env.NDOE_ENV !== 'production';
 
@@ -18,8 +17,6 @@ async function main() {
       '--user-agent=' + userAgent
     ]
   });
-
-  console.log(userAgent);
 
   const [page, searchLinks] = await Promise.all([
     // Set the cookies necessary from logging in

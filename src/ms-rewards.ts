@@ -20,9 +20,6 @@ export async function getSearchLinks(browser: puppeteer.Browser, platform: any) 
     words.push(allWords[randomInt(0, allWords.length)]);
   }
 
-  await console.log(words);
-  console.log(words.length);
-
   return words;
 
 }
@@ -56,7 +53,6 @@ export async function login(browser: puppeteer.Browser): Promise<puppeteer.Page>
 }
 
 export async function runSearch(searchPage: puppeteer.Page, queries: Array<string>) {
-
   for (const word of queries) {
     await searchPage.goto('https://bing.com/?q=' + word, { waitUntil: 'domcontentloaded' });
     await searchPage.waitFor(randomInt(2000, 5000));
