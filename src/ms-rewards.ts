@@ -8,32 +8,10 @@ export const Platforms = {
 }
 
 export async function getSearchLinks(browser: puppeteer.Browser, platform: any) {
-	/*
-  const page = await browser.newPage();
-
-  await page.goto('https://www.bing.com/');
-
-  await page.waitFor('#crs_pane a');
-
-  await page.click('#rightNavCaro');
-  await page.click('#rightNavCaro');
-
-  // To allow bar to load fully
-  await page.waitFor(randomInt(1000, 1500));
-
-  const links = page.evaluate(() =>
-    Array.from(document.querySelectorAll('#crs_pane a')).map(
-      (a: HTMLAnchorElement) => a.textContent
-    )
-  );
-
-  await page.close();
-
-  return links;
-  */
   const fs = require("fs");
   const allWords: Array<string> = fs.readFileSync("words_mit.txt", 'utf-8').split('\n');
 
+  // Go up to requirement, plus random padding
   const searchesRequired = (platform == Platforms.DESKTOP ? 30 : 20) + randomInt(2, 7);
 
 
@@ -41,6 +19,7 @@ export async function getSearchLinks(browser: puppeteer.Browser, platform: any) 
   for (var i = 0; i < searchesRequired; i++) {
     words.push(allWords[randomInt(0, allWords.length)]);
   }
+
   await console.log(words);
   console.log(words.length);
 
@@ -48,59 +27,7 @@ export async function getSearchLinks(browser: puppeteer.Browser, platform: any) 
 
 }
 
-export async function rememberLogin(browser: puppeteer.Browser, platform: any) {
-  const page = await browser.newPage();
-  await console.log(platform == Platforms.DESKTOP);
-  await console.log(platform == Platforms.MOBILE);
-  await page.goto('https://www.bing.com/');
-
-
-
-  if (platform == Platforms.DESKTOP) {
-    page.waitForSelector('#id_l');
-    await page.evaluate(() => {
-      const signInAnchor: HTMLAnchorElement = document.querySelector('#id_l');
-      const loggedInUsername = signInAnchor.textContent;
-      const signedOut = loggedInUsername.toLocaleLowerCase() === 'sign in';
-
-      if (!signedOut) return signedOut;
-
-      // Click sign in if necessary
-      signInAnchor.click();
-
-      // HACK: Wait arbitrary time for cookies to be loaded.
-      return new Promise(resolve => setTimeout(resolve, 1000));
-    });
-  } else if (platform == Platforms.MOBILE) {
-    await page.waitFor(5000);
-    //page.waitForSelector('#mHamburger');
-    await page.click('#mHamburger');
-
-    // To allow sidebar to open
-    await page.waitForSelector('#hb_s');
-
-
-    await page.evaluate(() => {
-      const signInAnchor: HTMLDivElement = document.querySelector('#hb_s');
-      const loggedInUsername = signInAnchor.textContent;
-      const signedOut = loggedInUsername.toLocaleLowerCase() === 'sign in';
-
-
-      if (!signedOut) return signedOut;
-
-      // Click sign in if necessary
-      (<HTMLElement>document.querySelector('#HBSignIn').children.item(0)).click();
-      // HACK: Wait arbitrary time for cookies to be loaded.
-      return new Promise(resolve => setTimeout(resolve, 1000));
-    });
-  }
-
-  await page.close();
-
-  return;
-}
-
-export async function login(browser: puppeteer.Browser) {
+export async function login(browser: puppeteer.Browser): Promise<puppeteer.Page> {
   const page = await browser.newPage();
 
   // Navigate to the login page
@@ -124,16 +51,14 @@ export async function login(browser: puppeteer.Browser) {
   await formHandle.press('Enter');
   await page.waitForNavigation();
 
-  page.close();
+  return page;
 
 }
 
-export async function runSearch(browser: puppeteer.Browser, queries: Array<string>) {
-  const searchPage = await browser.newPage();
+export async function runSearch(searchPage: puppeteer.Page, queries: Array<string>) {
 
   for (const word of queries) {
-    await searchPage.goto('https://bing.com/?q=' + word);
-    await searchPage.waitForNavigation();
+    await searchPage.goto('https://bing.com/?q=' + word, { waitUntil: 'domcontentloaded' });
     await searchPage.waitFor(randomInt(2000, 5000));
   }
   await searchPage.close();

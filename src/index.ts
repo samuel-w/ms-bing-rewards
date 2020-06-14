@@ -1,5 +1,5 @@
 import puppeteer from 'puppeteer';
-import { Platforms, rememberLogin, getSearchLinks, login, runSearch } from './ms-rewards';
+import { Platforms, getSearchLinks, login, runSearch } from './ms-rewards';
 import { platform } from 'os';
 
 const isDev = process.env.NDOE_ENV !== 'production';
@@ -21,7 +21,7 @@ async function main() {
 
   console.log(userAgent);
 
-  const [_, searchLinks] = await Promise.all([
+  const [page, searchLinks] = await Promise.all([
     // Set the cookies necessary from logging in
     login(browser),
     // Get list of text to search for
@@ -29,10 +29,8 @@ async function main() {
   ]);
 
 
-  await rememberLogin(browser, userAgent);
-
-  // Open searches in browser serially
-  await runSearch(browser, searchLinks);
+  // Open searches in browser
+  await runSearch(page, searchLinks);
 
   await browser.close();
 }
