@@ -29,10 +29,10 @@ export async function login(browser: puppeteer.Browser): Promise<puppeteer.Page>
 
   // Navigate to the login page
   // Ensure username and password are given
-  if (!credentials.username) {
+  if (credentials.username === 'USERNAME_HERE') {
     console.error('username is required but was not given');
     process.exit(1);
-  } else if (!credentials.password) {
+  } else if (credentials.password === 'PASSWORD_HERE') {
     console.error('password is required but was not given');
     process.exit(1);
   }
@@ -55,7 +55,7 @@ export async function login(browser: puppeteer.Browser): Promise<puppeteer.Page>
 export async function runSearch(searchPage: puppeteer.Page, queries: Array<string>) {
   for (const word of queries) {
     await searchPage.goto('https://bing.com/?q=' + word, { waitUntil: 'domcontentloaded' });
-    await searchPage.waitFor(randomInt(2000, 5000));
+    await searchPage.waitFor(randomInt(3000, 8000));
   }
   await searchPage.close();
 
