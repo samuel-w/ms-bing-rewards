@@ -13,13 +13,12 @@ items.
 ## Usage
 
 - Either [clone this repo](https://help.github.com/articles/cloning-a-repository/) or [download the zip file](https://github.com/blakek/ms-bing-rewards/archive/master.zip).
-- Set your username & password using the `LIVE_USERNAME` and `LIVE_PASSWORD` environment variables. For example:
-  - `export LIVE_USERNAME='youremail@live.com'`
-  - `export LIVE_PASSWORD='yourpassword'`
+- Edit the start.bat (Windows) or start.sh (OSX/Linux) with your username and password
 - With [npm](https://npmjs.org/) installed, run:
   - `npm install`
   - `npm run build`
-  - To run the searches, run `npm run start`, for mobile, run `npm run start:mobile`
+  - Run start.bat (Windows) or start.sh (OSX/Linux)
+  - Scroll up and down to deter bot detection
 
 **NOTE:** the login screen has been changed several times—sometimes very
 subtly—in the last couple months. Since the script relies on selectors to find
@@ -34,11 +33,7 @@ working for any reason.
 
 Things that would be nice to have but doesn't currently work
 
-- [ ] an easier interface for logging in
 - [ ] automated completion of daily offers
-- [ ] continue searching random topics using by keeping up with the daily points
-      (currently just clicks all the featured links, which gets _most_ of the
-      points)
 
 ## API
 
