@@ -7,10 +7,8 @@
     "build": "tsc",
     "dev": "run-p watch-node watch-typescript",
     "lint": "tsc --noEmit && eslint 'src/*/**/*.{js,ts,tsx}' --fix",
-    "start:desktop": "NODE_ENV=production node dist/index.js desktop",
-    "start:mobile": "NODE_ENV=production node dist/index.js mobile",
-    "devel:desktop": "NODE_ENV=devel node dist/index.js desktop",
-    "devel:mobile": "NODE_ENV=devel node dist/index.js mobile",
+    "start": "NODE_ENV=production node dist/index.js",
+    "devel": "NODE_ENV=devel node dist/index.js",
     "start": "NODE_ENV=production node .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch-node": "nodemon ./dist/index.js",
@@ -41,6 +39,7 @@
     "nodemon": "^2.0.4",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.0.5",
-    "typescript": "^3.9.5"
+    "typescript": "^3.9.5",
+    "dotenv": "^8.2.0"
   }
 }
